@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFacturesTable extends Migration
+class CreateDatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,14 @@ class CreateFacturesTable extends Migration
      */
     public function up()
     {
-        Schema::create('factures', function (Blueprint $table) {
+        Schema::create('dates', function (Blueprint $table) {
             $table->id();
+            $table->integer('annee');
+            $table->string('trimestre');
+            $table->boolean('situation')->default(false);
+            $table->foreignId('taxe_id')->constrained();
+            $table->foreignId("user_id")->constrained();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -26,6 +32,6 @@ class CreateFacturesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('factures');
+        Schema::dropIfExists('dates');
     }
 }

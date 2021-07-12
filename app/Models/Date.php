@@ -6,15 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Facture extends Model
+class Date extends Model
 {
     use SoftDeletes;
     use HasFactory;
-    public function date(){
-        return $this->belongsTo(Date::class);
+    public function facture(){
+        return $this->hasOne(Facture::class);
+    }
+    public function taxe(){
+        return $this->belongsTo(Taxe::class);
     }
     public function user(){
         return $this->belongsTo(User::class);
     }
-
 }

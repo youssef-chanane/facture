@@ -15,6 +15,11 @@ class CreateTaxesTable extends Migration
     {
         Schema::create('taxes', function (Blueprint $table) {
             $table->id();
+            $table->integer('tp');
+            $table->string('type');
+            $table->foreignId('client_id')->constrained();
+            $table->foreignId("user_id")->constrained();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

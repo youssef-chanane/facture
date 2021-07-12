@@ -10,6 +10,18 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    public function clients(){
+        return $this->hasMany(Client::class);
+    }
+    public function taxes(){
+        return $this->hasMany(Taxe::class);
+    }
+    public function dates(){
+        return $this->hasMany(Date::class);
+    }
+    public function factures(){
+        return $this->hasMany(Facture::class);
+    }
 
     /**
      * The attributes that are mass assignable.
