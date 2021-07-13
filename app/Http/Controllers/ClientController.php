@@ -45,14 +45,15 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->only(['nom','prenom','cin','n_tel']);
-        $data['user_id']=$request->user()->id;
         $request->validate([
             "nom"=>"required|string",
             "prenom"=>"required|string",
-            "cin"=>"required|unique:clients,cin,NULL,id,deleted_at,NULL",
-            "n_tel"=>"required|numeric|digits:10|unique:clients,n_tel,NULL,id,deleted_at,NULL"
+            "cin"=>"required|unique:clients",
+            "n_tel"=>"required|numeric|digits:10|unique:clients"
             ]);
+        $data=$request->only(['nom','prenom','cin','n_tel']);
+        $data['user_id']=$request->user()->id;
+        
         $client=Client::create($data);
 
         $request->session()->flash('success','client ajouter avec success!');
@@ -92,16 +93,19 @@ class ClientController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            "nom"=>"required|string",
+            "prenom"=>"required|string",
+            "cin"=>"required|unique:clients,cin,$id",
+            "n_tel"=>"required|numeric|digits:10|unique:clients,n_tel,$id"
+            ]);
         $client=Client::find($id);
         $data=$request->only(['nom','prenom','cin','n_tel']);
         $data['user_id']=$request->user()->id;
-        $request->validate([
-        "nom"=>"required|string",
-        "prenom"=>"required|string",
-        "cin"=>"required|unique:clients,cin,$id,id,deleted_at,NULL",
-        "n_tel"=>"required|numeric|digits:10|unique:clients,n_tel,$id,id,deleted_at,NULL"
-        ]);
+        
         $client->update($data);
+        $request->session()->flash('success','client modifier avec succes!');
+
         return redirect()->route('clients.index');
     }
 
@@ -113,8 +117,14 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        Client::destroy($id);
-        session()->flash('success','le client est supprimé avec success');
+        $client=Client::find($id);
+        if($client->taxes->count()>0){
+            session()->flash('error','tu ne peux pas suprimé ce client car il a des factures');
+            return redirect()->back();
+        }
+        $client->destroy($id);
+
+        session()->flash('error','le client est supprimé avec success');
         return redirect()->route('clients.index');
     }
 }

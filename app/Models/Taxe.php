@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Taxe extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    protected $fillable=['tp','type','client_id','user_id'];
     public function client(){
         return $this->belongsTo(Client::class);
     }

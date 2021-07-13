@@ -5,28 +5,30 @@
 
             <h4 class="card-title">
                 <div class="col-12"><div class="d-flex justify-content-end mb-2">
-                    <a href="{{route('clients.create')}}" class="btn btn-success ml-200">ajouter client</a>
+                    <a href="{{route('taxes.create')}}" class="btn btn-success ml-200">ajouter taxe</a>
                 </div>
-                Liste des clients</h4>
+                Liste des taxes</h4>
             <table class="table table-striped">
                 <thead>
                     <th>#</th>
-                    <th>Nom</th>
-                    <th>CIN </th>
+                    <th>type de taxe</th>
+                    <th>patanta</th>
+                    <th>Nom du client</th>
                     <th>Tél</th>
                     <th></th>
                     <th></th>
                 </thead>
                 <tbody>
-                    @foreach($clients as $client)
+                    @foreach($taxes as $taxe)
                         <tr>
-                            <td>{{$client->id}}</td>
-                            <td>{{$client->nom}} {{$client->prenom}}</td>
-                            <td>{{$client->cin}}</td>
-                            <td>{{$client->n_tel}}</td>
-                            <td><a class="btn btn-success" href="{{route('clients.edit',$client->id)}}">modifier</a></td>
+                            <td>{{$taxe->id}}</td>
+                            <td>{{$taxe->type}}</td>
+                            <td>{{$taxe->tp}}</td>
+                            <td>{{$taxe->client()->pluck('nom')[0]}} {{$taxe->client()->pluck('prenom')[0]}}</td>
+                            <td>{{$taxe->client()->pluck('n_tel')[0]}}</td>
+                            <td><a class="btn btn-success" href="{{route('taxes.edit',$taxe->id)}}">modifier</a></td>
                             <td>
-                                <form action="{{route('clients.destroy',$client->id)}}" method="post">
+                                <form action="{{route('taxes.destroy',$taxe->id)}}" method="post">
                                     @csrf
                                     @method('delete')
                                     <input type="submit" value="suprimmer" class="btn btn-danger">

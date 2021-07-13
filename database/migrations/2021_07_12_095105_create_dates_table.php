@@ -20,7 +20,6 @@ class CreateDatesTable extends Migration
             $table->boolean('situation')->default(false);
             $table->foreignId('taxe_id')->constrained();
             $table->foreignId("user_id")->constrained();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

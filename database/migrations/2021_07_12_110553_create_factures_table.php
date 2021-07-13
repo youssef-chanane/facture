@@ -19,7 +19,6 @@ class CreateFacturesTable extends Migration
             $table->integer('montant');
             $table->foreignId('date_id')->constrained();
             $table->foreignId("user_id")->constrained();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

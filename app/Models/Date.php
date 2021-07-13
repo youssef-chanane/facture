@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Date extends Model
 {
-    use SoftDeletes;
     use HasFactory;
     public function facture(){
         return $this->hasOne(Facture::class);

@@ -20,7 +20,6 @@ class CreateClientsTable extends Migration
             $table->string('cin');
             $table->string('n_tel');
             $table->foreignId("user_id")->constrained();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

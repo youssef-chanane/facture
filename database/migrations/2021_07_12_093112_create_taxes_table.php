@@ -19,7 +19,6 @@ class CreateTaxesTable extends Migration
             $table->string('type');
             $table->foreignId('client_id')->constrained();
             $table->foreignId("user_id")->constrained();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

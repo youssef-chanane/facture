@@ -27,6 +27,7 @@
                     {{ config('app.name', 'Laravel') }}
                 </a>
                 <a href="{{route('clients.index')}}" class="navbar">clients</a>
+                <a href="{{route('taxes.index')}}" class="navbar">taxes</a>
                 {{-- <a href="{{route('posts.index')}}" class="navbar">posts</a>
                 <a href="{{route('tags.index')}}" class="navbar">tags</a> --}}
                 
@@ -80,6 +81,18 @@
         </nav>
 
         <main class="py-4">
+            {{-- success session --}}
+            @if(session()->has('success'))
+            <div class="alert alert-success">
+                {{session()->get('success')}}
+            </div>
+        @endif
+        {{-- error session --}}
+        @if(session()->has('error'))
+            <div class="alert alert-danger">
+                {{session()->get('error')}}
+            </div>
+        @endif
             @yield('content')
         </main>
     </div>
