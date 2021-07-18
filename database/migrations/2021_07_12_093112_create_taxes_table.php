@@ -17,6 +17,9 @@ class CreateTaxesTable extends Migration
             $table->id();
             $table->integer('tp');
             $table->string('type');
+            $table->string('paiement');
+            $table->integer('last_year');
+            $table->integer('last_tranche');
             $table->foreignId('client_id')->constrained();
             $table->foreignId("user_id")->constrained();
             $table->timestamps();

@@ -13,8 +13,9 @@
                     <th>#</th>
                     <th>type de taxe</th>
                     <th>patanta</th>
+                    <th>paiement</th>
                     <th>Nom du client</th>
-                    <th>Tél</th>
+                    <th>Dernier facture payé</th>
                     <th></th>
                     <th></th>
                 </thead>
@@ -24,8 +25,9 @@
                             <td>{{$taxe->id}}</td>
                             <td>{{$taxe->type}}</td>
                             <td>{{$taxe->tp}}</td>
+                            <td>{{$taxe->paiement}}</td>
                             <td>{{$taxe->client()->pluck('nom')[0]}} {{$taxe->client()->pluck('prenom')[0]}}</td>
-                            <td>{{$taxe->client()->pluck('n_tel')[0]}}</td>
+                            <td> {{($taxe->paiement=="trimestriel")?"trimestre $taxe->last_tranche":''}} {{($taxe->paiement=="mensuel")?"mois $taxe->last_tranche":''}} {{$taxe->last_year}}</td>
                             <td><a class="btn btn-success" href="{{route('taxes.edit',$taxe->id)}}">modifier</a></td>
                             <td>
                                 <form action="{{route('taxes.destroy',$taxe->id)}}" method="post">

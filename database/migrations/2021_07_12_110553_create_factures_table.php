@@ -15,9 +15,11 @@ class CreateFacturesTable extends Migration
     {
         Schema::create('factures', function (Blueprint $table) {
             $table->id();
+            $table->string('annee');
+            $table->string('tranche');
             $table->integer('n_quetence');
             $table->integer('montant');
-            $table->foreignId('date_id')->constrained();
+            $table->foreignId('taxe_id')->constrained();
             $table->foreignId("user_id")->constrained();
             $table->timestamps();
         });

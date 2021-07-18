@@ -27,7 +27,10 @@ class TaxeController extends Controller
      */
     public function create()
     {
-        return view('taxes.create');
+        $clients=Client::all();
+        return view('taxes.create',[
+            "clients"=>$clients
+        ]);
     }
 
     /**
@@ -43,7 +46,7 @@ class TaxeController extends Controller
             'type'=>'required',
             'cin'=>'required|exists:clients,cin'
         ]);
-        $data=$request->only(['tp','type']);
+        $data=$request->only(['tp','type','paiement','last_year','last_tranche']);
         $client=Client::where('cin',$request->cin)->get();
         $clientId=$client->pluck('id');
         $data['client_id']=$clientId[0];
@@ -75,7 +78,8 @@ class TaxeController extends Controller
         $taxe=Taxe::find($id);
         return view('taxes.edit',[
             'taxe'=>$taxe,
-            'client'=>$taxe->client
+            'client'=>$taxe->client,
+            'clients'=>Client::all()
         ]);
     }
 
@@ -94,7 +98,7 @@ class TaxeController extends Controller
             'cin'=>'required|exists:clients,cin'
         ]);
         $taxe=Taxe::find($id);
-        $data=$request->only(['tp','type']);
+        $data=$request->only(['tp','type','paiement','last_year','last_tranche']);
         $client=Client::where('cin',$request->cin)->get();
         $clientId=$client->pluck('id');
         $data['client_id']=$clientId[0];

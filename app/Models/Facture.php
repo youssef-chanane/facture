@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Facture extends Model
 {
     use HasFactory;
-    public function date(){
-        return $this->belongsTo(Date::class);
+    public function taxe(){
+        return $this->belongsTo(Taxe::class);
     }
     public function user(){
         return $this->belongsTo(User::class);
