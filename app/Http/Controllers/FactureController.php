@@ -2,83 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Facture;
+use App\Models\Taxe;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use LaravelDaily\Invoices\Invoice;
+use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\InvoiceItem;
 
 class FactureController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct()
     {
-        //
+        $this->middleware('auth');
+    }
+    public function create(Taxe $taxe){
+        $client=$taxe->client;
+        $this->authorize('view',$taxe);
+        return view("factures.create",[
+            "taxe"=>$taxe,
+            "client"=>$client
+        ]);
+    }
+    public function store(Request $request,Taxe $taxe){
+        $this->authorize('view',$taxe);
+        $request->validate([
+            'n_quetence'=>"required|numeric|gt:0|unique:factures",
+            'montant'=>"required|numeric|gt:0",
+
+    ]);
+        $data=$request->only(['annee','tranche','n_quetence','montant']);
+        $data['taxe_id']=$taxe->id;
+        $data['user_id']=$taxe->user_id;
+        $facture=Facture::create($data);
+        $taxe->last_year=$request->annee;
+        $taxe->last_tranche=$request->tranche;
+        $taxe->save();
+        return redirect()->route('taxes.index',["taxes"=>Taxe::all()]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('factures.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    // public function show(Facture $facture){
+    //       $pdf = PDF::loadView('factures.show',['facture'=>$facture]);
+    //       return $pdf->download('facture_N'.$facture->n_quetence.'.pdf');
+    // }
 }

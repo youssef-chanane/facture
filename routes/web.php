@@ -20,7 +20,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::resource('/clients','ClientController');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/factures/{taxe}/create', [App\Http\Controllers\FactureController::class, 'create'])->name('factures.create');
+Route::get('factures/{facture}/show',[App\Http\Controllers\FactureController::class, 'show'])->name('factures.show');
+Route::post('/factures/{taxe}', [App\Http\Controllers\FactureController::class, 'store'])->name('factures.store');
+Route::get('/taxes/trimestriel', [App\Http\Controllers\TaxeController::class, 'trimestriel'])->name('taxes.trimestriel');
+Route::get('/taxes/annuel', [App\Http\Controllers\TaxeController::class, 'annuel'])->name('taxes.annuel');
+Route::get('/taxes/mensuel', [App\Http\Controllers\TaxeController::class, 'mensuel'])->name('taxes.mensuel');
 Route::resource('/taxes','TaxeController');
-Route::resource('/factures','FactureController');
+Route::resource('/clients','ClientController');
+// Route::resource('/factures','FactureController');

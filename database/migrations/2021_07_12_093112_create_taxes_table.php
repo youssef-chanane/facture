@@ -15,11 +15,11 @@ class CreateTaxesTable extends Migration
     {
         Schema::create('taxes', function (Blueprint $table) {
             $table->id();
-            $table->integer('tp');
+            $table->bigInteger('tp');
             $table->string('type');
             $table->string('paiement');
             $table->integer('last_year');
-            $table->integer('last_tranche');
+            $table->integer('last_tranche')->default(1);
             $table->foreignId('client_id')->constrained();
             $table->foreignId("user_id")->constrained();
             $table->timestamps();

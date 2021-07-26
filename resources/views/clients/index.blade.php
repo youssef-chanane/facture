@@ -19,21 +19,22 @@
                 </thead>
                 <tbody>
                     @foreach($clients as $client)
-                        <tr>
-                            <td>{{$client->id}}</td>
-                            <td>{{$client->nom}} {{$client->prenom}}</td>
-                            <td>{{$client->cin}}</td>
-                            <td>{{$client->n_tel}}</td>
-                            <td><a class="btn btn-success" href="{{route('clients.edit',$client->id)}}">modifier</a></td>
-                            <td>
-                                <form action="{{route('clients.destroy',$client->id)}}" method="post">
-                                    @csrf
-                                    @method('delete')
-                                    <input type="submit" value="suprimmer" class="btn btn-danger">
-                                </form>
-                            </td>
-                        </tr>
-        
+                        @can('view',$client)
+                            <tr>
+                                <td>{{$client->id}}</td>
+                                <td>{{$client->nom}} {{$client->prenom}}</td>
+                                <td>{{$client->cin}}</td>
+                                <td>{{$client->n_tel}}</td>
+                                <td><a class="btn btn-success" href="{{route('clients.edit',$client->id)}}">modifier</a></td>
+                                <td>
+                                    <form action="{{route('clients.destroy',$client->id)}}" method="post">
+                                        @csrf
+                                        @method('delete')
+                                        <input type="submit" value="suprimmer" class="btn btn-danger">
+                                    </form>
+                                </td>
+                            </tr>
+                        @endcan
                     @endforeach
                 </tbody>
             </table>        

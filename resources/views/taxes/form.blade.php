@@ -22,6 +22,7 @@
 
 
 </div>
+@if(!isset($taxe))
 <div class="form-group">
     <label for="tp">TP :</label>
     <input type="text" name="tp" id="tp" placeholder="exp:12345678" class="form-control"  value="{{old('tp',isset($taxe->tp) ? $taxe->tp:'') ?? NULL}}">
@@ -31,7 +32,7 @@
     <input type="text" name="type" id="type" placeholder="exp: taxe sur débit de boisson" class="form-control"  value="{{old('type',isset($taxe->type) ? $taxe->type:'') ?? NULL}}">
 </div>
 <div class="form-group">
-    <label for="paiement">paiement</label>
+    <label for="paiement">Régime</label>
     <select name="paiement" id="paiement" class="form-control basic-multiple">
         <option value="annuel"  {{(isset($taxe) && $taxe->paiement=='annuel')? 'selected' : ' '}}>annuel</option>
         <option value="trimestriel"  {{(isset($taxe) && $taxe->paiement=='trimestriel')? 'selected' : ' '}}>trimestriel</option>
@@ -43,7 +44,7 @@
         <label for="annee">année du dernier facture payée </label>
     </div>
     <div class="col-auto">
-        <select name="last_year" id="annee" class="form-control" value="{{old('type',isset($taxe->last_year) ? $taxe->last_year:'') ?? NULL}}">
+        <select name="last_year" id="annee" class="form-control">
             @for($i=date('Y')-10;$i<=date('Y');$i++)
                 <option value="{{$i}}" {{($i==date('Y')) ? "selected":" "}}>{{$i}}</option>
             @endfor
@@ -58,6 +59,7 @@
         </select>
     </div>
 </div>
+@endif
 
 @if($errors->any())
  <div class="alert alert-danger">
@@ -68,74 +70,71 @@
     </ul>
  </div>
  @endif
-<div class="form-group">
+<div class="form-group mt-4">
     <button class="btn btn-success" type="submit">Enregistrer</button>
 </div>
 <script>
-    $(function(){
-        //afficher le nom et le prenom aprés l'entré du cin
-        let clients =@json($clients);
-        console.log(clients);
-        client=clients.filter(el=>el.cin==$("#cin").val())[0];
-        console.log(client.nom);
-            if(client && client.nom){
-                $("#fadeNom").fadeIn("fast");
-                $("#nom").val(client.nom);
-                $("#prenom").val(client.prenom);
-                $("#cin").addClass("is-valid");
-                $("#cin").removeClass("is-invalid");
-            }else{
-                $("#fadeNom").fadeOut();
-                $("#cin").addClass("is-invalid");
-                $("#cin").removeClass("is-valid");
+    // $(function(){
+    //     //afficher le nom et le prenom aprés l'entré du cin
+    //     let clients =@json($clients);
+    //     console.log(clients);
+    //     client=clients.filter(el=>el.cin==$("#cin").val())[0];
+    //     console.log(client.nom);
+    //         if(client && client.nom){
+    //             $("#fadeNom").fadeIn("fast");
+    //             $("#nom").val(client.nom);
+    //             $("#prenom").val(client.prenom);
+    //             $("#cin").addClass("is-valid");
+    //             $("#cin").removeClass("is-invalid");
+    //         }else{
+    //             $("#fadeNom").fadeOut();
+    //             $("#cin").addClass("is-invalid");
+    //             $("#cin").removeClass("is-valid");
 
-            }
-        $("#cin").change(function(){
+    //         }
+    //     $("#cin").change(function(){
 
-            client=clients.filter(el=>el.cin==$(this).val())[0];
-            if(client && client.nom){
-                $("#fadeNom").fadeIn("fast");
-                $(this).addClass("is-valid");
-                $(this).removeClass("is-invalid");
-                $("#nom").val(client.nom);
-                $("#prenom").val(client.prenom);
-            }else{
-                $("#fadeNom").fadeOut();
-                $(this).addClass("is-invalid");
-                $(this).removeClass("is-valid");
-            }
+    //         client=clients.filter(el=>el.cin==$(this).val())[0];
+    //         if(client && client.nom){
+    //             $("#fadeNom").fadeIn("fast");
+    //             $(this).addClass("is-valid");
+    //             $(this).removeClass("is-invalid");
+    //             $("#nom").val(client.nom);
+    //             $("#prenom").val(client.prenom);
+    //         }else{
+    //             $("#fadeNom").fadeOut();
+    //             $(this).addClass("is-invalid");
+    //             $(this).removeClass("is-valid");
+    //         }
        
 
-        }
-        );
+    //     }
+    //     );
         
-        //changer les valeurs du tranche selon le type de paiement
-        if($("#paiement").val()=="trimestriel"){
-            $("#tranche").html('<option value="1">trimestre 1</option><option value="2">trimestre 2</option><option value="3">trimestre 3</option><option value="4">trimestre 4</option>');
-        }
-        if($("#paiement").val()=="mensuel"){
-            $("#tranche").html('<option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option><option value="4">Avril</option><option value="5">Mai</option><option value="6">Juin</option><option value="7">Juillet</option><option value="8">août</option><option value="9">Septembre</option><option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>');
-        }
-        if($("#paiement").val()=="annuel"){
-            $(".hide").hide();
-        }else{
-            $(".hide").show();
-        }
-        $("#paiement").change(function(){
-            if($(this).val()=="trimestriel"){
-                $("#tranche").html('<option value="1">trimestre 1</option><option value="2">trimestre 2</option><option value="3">trimestre 3</option><option value="4">trimestre 4</option>');
-            }
-            if($(this).val()=="mensuel"){
-                $("#tranche").html('<option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option><option value="4">Avril</option><option value="5">Mai</option><option value="6">Juin</option><option value="7">Juillet</option><option value="8">août</option><option value="9">Septembre</option><option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>');
-            }
-            if($(this).val()=="annuel"){
-                $(".hide").hide();
-            }else{
-                $(".hide").show();
-            }
-
-
-            
-        });
-    });
+    //     //changer les valeurs du tranche selon le type de paiement
+    //     if($("#paiement").val()=="trimestriel"){
+    //         $("#tranche").html('<option value="1">trimestre 1</option><option value="2">trimestre 2</option><option value="3">trimestre 3</option><option value="4">trimestre 4</option>');
+    //     }
+    //     if($("#paiement").val()=="mensuel"){
+    //         $("#tranche").html('<option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option><option value="4">Avril</option><option value="5">Mai</option><option value="6">Juin</option><option value="7">Juillet</option><option value="8">août</option><option value="9">Septembre</option><option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>');
+    //     }
+    //     if($("#paiement").val()=="annuel"){
+    //         $(".hide").hide();
+    //     }else{
+    //         $(".hide").show();
+    //     }
+    //     $("#paiement").change(function(){
+    //         if($(this).val()=="trimestriel"){
+    //             $("#tranche").html('<option value="1">trimestre 1</option><option value="2">trimestre 2</option><option value="3">trimestre 3</option><option value="4">trimestre 4</option>');
+    //         }
+    //         if($(this).val()=="mensuel"){
+    //             $("#tranche").html('<option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option><option value="4">Avril</option><option value="5">Mai</option><option value="6">Juin</option><option value="7">Juillet</option><option value="8">août</option><option value="9">Septembre</option><option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>');
+    //         }
+    //         if($(this).val()=="annuel"){
+    //             $(".hide").hide();
+    //         }else{
+    //             $(".hide").show();
+    //         }    
+    //     });        
+    // });
 </script>

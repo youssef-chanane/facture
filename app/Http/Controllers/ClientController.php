@@ -14,6 +14,10 @@ use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -79,8 +83,11 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
+        $client=Client::find($id);
+        $this->authorize('view',$client);
         return view('clients.edit',[
-            'client'=>Client::find($id)]
+            'client'=>$client
+            ]
         );
     }
 
@@ -100,6 +107,7 @@ class ClientController extends Controller
             "n_tel"=>"required|numeric|digits:10|unique:clients,n_tel,$id"
             ]);
         $client=Client::find($id);
+        $this->authorize('view',$client);
         $data=$request->only(['nom','prenom','cin','n_tel']);
         $data['user_id']=$request->user()->id;
         
@@ -118,6 +126,7 @@ class ClientController extends Controller
     public function destroy($id)
     {
         $client=Client::find($id);
+        $this->authorize('view',$client);
         if($client->taxes->count()>0){
             session()->flash('error','tu ne peux pas suprimé ce client car il a des factures');
             return redirect()->back();

@@ -17,9 +17,9 @@ class CreateFacturesTable extends Migration
             $table->id();
             $table->string('annee');
             $table->string('tranche');
-            $table->integer('n_quetence');
+            $table->bigInteger('n_quetence');
             $table->integer('montant');
-            $table->foreignId('taxe_id')->constrained();
+            $table->foreignId('taxe_id')->constrained()->onDelete('cascade');
             $table->foreignId("user_id")->constrained();
             $table->timestamps();
         });

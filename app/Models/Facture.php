@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Facture extends Model
 {
     use HasFactory;
+    protected $fillable=['annee','tranche','n_quetence','montant','taxe_id','user_id'];
     public function taxe(){
         return $this->belongsTo(Taxe::class);
     }

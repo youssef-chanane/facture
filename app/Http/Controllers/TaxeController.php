@@ -3,23 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Facture;
 use App\Models\Taxe;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaxeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $taxes=Taxe::with('client')->get();
-        return view('taxes.index',[
-            'taxes'=>$taxes]);
-    }
+        //avoir id de la dernier facture
+        $factures=Facture::get();
+        $lastFactureId=$factures[sizeof($factures)-1]->id;
 
+        $search=$request->query('search');
+        if($search){
+            $taxes=Taxe::where('user_id',Auth::id())->where('tp','LIKE',"%{$search}%")->with('client')->get();
+        }else{
+            $taxes=Taxe::where('user_id',Auth::id())->with('client')->get();
+        }
+
+        return view('taxes.index',[
+            'taxes'=>$taxes,
+            'tag'=>'tous',
+            'lastFactureId'=>$lastFactureId
+        ]);
+    }
+    //juste payé par trimestre
+    public function trimestriel(){
+        //avoir id de la dernier facture
+        $factures=Facture::get();
+        $lastFactureId=$factures[sizeof($factures)-1]->id;
+        $taxes=Taxe::where('user_id',Auth::id())->where('paiement','=','trimestriel')->with('client')->orderBY('last_year')->orderBy('last_tranche')->get();
+        return view('taxes.index',[
+            'taxes'=>$taxes,
+            'tag'=>'trimestriel',
+            'lastFactureId'=>$lastFactureId
+        ]);
+        
+    }
+    //juste payé par mois
+    public function mensuel(){
+        //avoir id de la dernier facture
+        $factures=Facture::get();
+        $lastFactureId=$factures[sizeof($factures)-1]->id;
+        $taxes=Taxe::where('user_id',Auth::id())->where('paiement','=','mensuel')->with('client')->orderBY('last_year')->orderBy('last_tranche')->get();
+        // dd($taxes);
+        return view('taxes.index',[
+            'taxes'=>$taxes,
+            'tag'=>'mensuel',
+            'lastFactureId'=>$lastFactureId
+        ]);
+    }
+    //juste payé annuelement
+    public function annuel(){
+        //avoir id de la dernier facture
+        $factures=Facture::get();
+        $lastFactureId=$factures[sizeof($factures)-1]->id;
+        $taxes=Taxe::where('user_id',Auth::id())->where('paiement','=','annuel')->with('client')->orderBY('last_year')->orderBy('last_tranche')->get();
+        // dd($taxes);
+        return view('taxes.index',[
+            'taxes'=>$taxes,
+            'tag'=>'annuel',
+            'lastFactureId'=>$lastFactureId
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -27,7 +84,7 @@ class TaxeController extends Controller
      */
     public function create()
     {
-        $clients=Client::all();
+        $clients=Client::where('user_id',Auth::id())->get();
         return view('taxes.create',[
             "clients"=>$clients
         ]);
@@ -42,7 +99,7 @@ class TaxeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tp'=>'required|numeric|unique:taxes',
+            'tp'=>'required|numeric|gt:0|unique:taxes',
             'type'=>'required',
             'cin'=>'required|exists:clients,cin'
         ]);
@@ -51,9 +108,17 @@ class TaxeController extends Controller
         $clientId=$client->pluck('id');
         $data['client_id']=$clientId[0];
         $data['user_id']=$request->user()->id;
-        Taxe::create($data);
-        $request->session()->flash('success','taxe ajouter avec succes!');
-        return redirect()->route('taxes.index');
+
+        //verifier si le cient entré est crée par le meme utilisateur 
+        if($client->pluck('user_id')[0]==Auth::id()){
+            Taxe::create($data);
+            $request->session()->flash('success','taxe ajouter avec succes!');
+            return redirect()->route('taxes.index'); 
+        }else{
+            $request->session()->flash('error','entrer un utilisateur valide');
+            return redirect()->back();
+        }
+
     }
 
     /**
@@ -76,10 +141,13 @@ class TaxeController extends Controller
     public function edit($id)
     {
         $taxe=Taxe::find($id);
+        $this->authorize('view',$taxe);
+        $clients=Client::where('user_id',Auth::id())->get();
+        // dd($clients[0]->nom);
         return view('taxes.edit',[
             'taxe'=>$taxe,
             'client'=>$taxe->client,
-            'clients'=>Client::all()
+            'clients'=>$clients
         ]);
     }
 
@@ -93,19 +161,24 @@ class TaxeController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'tp'=>"required|numeric|unique:taxes,tp,$id",
-            'type'=>'required',
             'cin'=>'required|exists:clients,cin'
         ]);
         $taxe=Taxe::find($id);
+        $this->authorize('view',$taxe);
         $data=$request->only(['tp','type','paiement','last_year','last_tranche']);
         $client=Client::where('cin',$request->cin)->get();
         $clientId=$client->pluck('id');
         $data['client_id']=$clientId[0];
         $data['user_id']=$request->user()->id;
-        $taxe->update($data);
-        $request->session()->flash('success','taxe modifier avec succes!');
-        return redirect()->route('taxes.index');
+        //verifier si le client entré est crée par le meme utilisateur 
+        if($client->pluck('user_id')[0]==Auth::id()){
+            $taxe->update($data);
+            $request->session()->flash('success','propriétaire modifier avec succes!');
+            return redirect()->route('taxes.index');
+        }else{
+            $request->session()->flash('error','entrer un utilisateur valide');
+            return redirect()->back();
+        }
         
     }
 
@@ -118,6 +191,7 @@ class TaxeController extends Controller
     public function destroy($id)
     {
         $taxe=Taxe::find($id);
+        $this->authorize('view',$taxe);
         $taxe->destroy($id);
 
         session()->flash('error','taxe supprimé');
