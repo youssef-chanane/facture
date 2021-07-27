@@ -21,9 +21,7 @@ class TaxeController extends Controller
      */
     public function index(Request $request)
     {
-        //avoir id de la dernier facture
-        $factures=Facture::get();
-        $lastFactureId=$factures[sizeof($factures)-1]->id;
+        
 
         $search=$request->query('search');
         if($search){
@@ -34,47 +32,37 @@ class TaxeController extends Controller
 
         return view('taxes.index',[
             'taxes'=>$taxes,
-            'tag'=>'tous',
-            'lastFactureId'=>$lastFactureId
+            'tag'=>'tous'
         ]);
     }
     //juste payé par trimestre
     public function trimestriel(){
-        //avoir id de la dernier facture
-        $factures=Facture::get();
-        $lastFactureId=$factures[sizeof($factures)-1]->id;
+       
         $taxes=Taxe::where('user_id',Auth::id())->where('paiement','=','trimestriel')->with('client')->orderBY('last_year')->orderBy('last_tranche')->get();
         return view('taxes.index',[
             'taxes'=>$taxes,
-            'tag'=>'trimestriel',
-            'lastFactureId'=>$lastFactureId
+            'tag'=>'trimestriel'
         ]);
         
     }
     //juste payé par mois
     public function mensuel(){
-        //avoir id de la dernier facture
-        $factures=Facture::get();
-        $lastFactureId=$factures[sizeof($factures)-1]->id;
+       
         $taxes=Taxe::where('user_id',Auth::id())->where('paiement','=','mensuel')->with('client')->orderBY('last_year')->orderBy('last_tranche')->get();
         // dd($taxes);
         return view('taxes.index',[
             'taxes'=>$taxes,
-            'tag'=>'mensuel',
-            'lastFactureId'=>$lastFactureId
+            'tag'=>'mensuel'
         ]);
     }
     //juste payé annuelement
     public function annuel(){
-        //avoir id de la dernier facture
-        $factures=Facture::get();
-        $lastFactureId=$factures[sizeof($factures)-1]->id;
+        
         $taxes=Taxe::where('user_id',Auth::id())->where('paiement','=','annuel')->with('client')->orderBY('last_year')->orderBy('last_tranche')->get();
         // dd($taxes);
         return view('taxes.index',[
             'taxes'=>$taxes,
-            'tag'=>'annuel',
-            'lastFactureId'=>$lastFactureId
+            'tag'=>'annuel'
         ]);
     }
     /**

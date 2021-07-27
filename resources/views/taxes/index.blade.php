@@ -42,7 +42,7 @@
                     <div class="row ">
                         <div class="col-5 mx-5">
                             <h4>
-                                Dernier Facture Id : <span class="badge bg-danger text-light">{{$lastFactureId+1}}</span>
+                                Liste des factures
                             </h4>
                         </div>
                         <div class="col-4">
