@@ -35,6 +35,7 @@
                 </a>
                 <a href="{{route('clients.index')}}" class="navbar">clients</a>
                 <a href="{{route('taxes.index')}}" class="navbar">taxes</a>
+                <a href="{{route('counters.index')}}" class="navbar">compteurs</a>
                 {{-- <a href="{{route('posts.index')}}" class="navbar">posts</a>
                 <a href="{{route('tags.index')}}" class="navbar">tags</a> --}}
                 
